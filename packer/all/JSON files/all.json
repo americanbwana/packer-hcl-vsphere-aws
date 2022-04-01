@@ -1,0 +1,235 @@
+{
+    "builders": [{
+            "name": "vSphere-CentOS8",
+            "CPUs": "2",
+            "RAM": "2048",
+            "RAM_reserve_all": false,
+            "firmware": "bios",
+            "boot_command": [
+                "<up><wait><tab><wait> text ks={{user `http_server`}}/centos8.cfg<enter><wait>"
+            ],
+            "boot_order": "disk,cdrom",
+            "cluster": "{{user `vcenter_cluster`}}",
+            "convert_to_template": "true",
+            "create_snapshot": "false",
+            "datastore": "{{user `vcenter_datastore`}}",
+            "disk_controller_type": "pvscsi",
+            "folder": "{{user `vcenter_folder`}}",
+            "guest_os_type": "centos8_64Guest",
+            "host": "{{user `vcenter_host`}}",
+            "insecure_connection": "true",
+            "iso_checksum": "sha256:{{user `centos8_checksum`}}",
+            "iso_paths": [
+                "{{user `centos8_iso`}}"
+            ],
+            "floppy_files": [
+                "../config/centos8.cfg"
+            ],
+            "network_adapters": [{
+                "network": "{{user `vcenter_network`}}",
+                "network_card": "vmxnet3"
+            }],
+            "notes": "Default SSH User: {{user `ssh_username`}}\nDefault SSH Pass: {{user `ssh_password`}}\nBuilt by Packer @ {{isotime \"2006-01-02 03:04\"}}.",
+            "password": "{{user `vcenter_password`}}",
+            "remove_cdrom": "true",
+            "shutdown_command": "echo '{{user `ssh_password`}}' | sudo -S -E shutdown -P now",
+            "ssh_password": "{{ user `ssh_password` }}",
+            "ssh_username": "{{ user `ssh_username` }}",
+            "storage": [{
+                "disk_size": "20480",
+                "disk_thin_provisioned": true
+            }],
+            "type": "vsphere-iso",
+            "username": "{{user `vcenter_username`}}",
+            "vcenter_server": "{{user `vcenter_server`}}",
+            "vm_name": "{{ user `centos8_vm_name` }}"
+        },
+        {
+            "name": "vSphere-Win2k19",
+            "CPUs": "{{user `win2k19_vm-cpu-num`}}",
+            "RAM": "{{user `win2k19_vm-mem-size`}}",
+            "RAM_reserve_all": false,
+            "cluster": "{{user `vsphere-cluster`}}",
+            "communicator": "winrm",
+            "convert_to_template": "true",
+            "datacenter": "{{user `vsphere-datacenter`}}",
+            "datastore": "{{user `vsphere-datastore`}}",
+            "disk_controller_type": "lsilogic-sas",
+            "firmware": "bios",
+            "floppy_files": [
+                "autounattend.xml",
+                "../scripts/disable-network-discovery.cmd",
+                "../scripts/enable-rdp.cmd",
+                "../scripts/enable-winrm.ps1",
+                "../scripts/install-vm-tools.cmd",
+                "../scripts/set-temp.ps1",
+                "../scripts/win-updates.ps1",
+                "../scripts/disable-all-fw.ps1"
+            ],
+            "folder": "{{user `vsphere-folder`}}",
+            "guest_os_type": "windows9Server64Guest",
+            "insecure_connection": "true",
+            "iso_paths": [
+                "{{user `win2k19_os_iso_path`}}",
+                "[] /vmimages/tools-isoimages/windows.iso"
+            ],
+            "remove_cdrom": true,
+            "network_adapters": [{
+                "network": "{{user `vsphere-network`}}",
+                "network_card": "vmxnet3"
+            }],
+            "password": "{{user `vsphere-password`}}",
+            "storage": [{
+                    "disk_size": "{{user `win2k19_vm-disk-size`}}",
+                    "disk_thin_provisioned": true
+                }
+
+            ],
+            "type": "vsphere-iso",
+            "username": "{{user `vsphere-user`}}",
+            "vcenter_server": "{{user `vsphere-server`}}",
+            "vm_name": "{{user `win2k19_vm-name`}}",
+            "winrm_password": "{{user `winadmin-password`}}",
+            "winrm_username": "{{user `winadmin-user` }}"
+        },
+        {
+            "name": "Aws-Win2k16",
+            "type": "amazon-ebs",
+            "region": "{{user `region`}}",
+            "access_key": "{{user `access_key`}}",
+            "secret_key": "{{user `secret_key`}}",
+            "vpc_id": "{{user `vpc_id`}}",
+            "subnet_id": "{{user `subnet_id`}}",
+            "security_group_id": "{{user `security_group_id`}}",
+            "source_ami_filter": {
+                "filters": {
+                    "name": "Windows_Server-2016-English-Full-Base-*",
+                    "root-device-type": "ebs",
+                    "virtualization-type": "hvm"
+                },
+                "most_recent": true,
+                "owners": [
+                    "801119661308"
+                ]
+            },
+            "ami_name": "Aws-Win2k16-CUSTOM-{{user `buildtime`}}",
+            "encrypt_boot": true,
+            "instance_type": "t2.large",
+            "user_data_file": "../scripts/awsUserDataOrg.ps1",
+            "associate_public_ip_address": true,
+            "communicator": "winrm",
+            "winrm_username": "{{ user `new_ansible_user` }}",
+            "winrm_password": "{{ user `new_ansible_password` }}",
+            "winrm_port": 5986,
+            "winrm_timeout": "15m",
+            "winrm_use_ssl": true,
+            "winrm_insecure": true
+        },
+        {
+            "name": "Aws-Win2k19",
+            "type": "amazon-ebs",
+            "region": "{{user `region`}}",
+            "access_key": "{{user `access_key`}}",
+            "secret_key": "{{user `secret_key`}}",
+            "vpc_id": "{{user `vpc_id`}}",
+            "subnet_id": "{{user `subnet_id`}}",
+            "security_group_id": "{{user `security_group_id`}}",
+            "source_ami_filter": {
+                "filters": {
+                    "name": "Windows_Server-2019-English-Full-Base-*",
+                    "root-device-type": "ebs",
+                    "virtualization-type": "hvm"
+                },
+                "most_recent": true,
+                "owners": [
+                    "801119661308"
+                ]
+            },
+            "ami_name": "Aws-Win2k19-CUSTOM-{{user `buildtime`}}",
+            "encrypt_boot": true,
+            "instance_type": "t2.large",
+            "user_data_file": "../scripts/awsUserDataOrg.ps1",
+            "associate_public_ip_address": true,
+            "communicator": "winrm",
+            "winrm_username": "{{ user `new_ansible_user` }}",
+            "winrm_password": "{{ user `new_ansible_password` }}",
+            "winrm_port": 5986,
+            "winrm_timeout": "15m",
+            "winrm_use_ssl": true,
+            "winrm_insecure": true
+        }
+    ],
+    "provisioners": [{
+            "only": [
+                "vSphere-CentOS8"
+            ],
+            "type": "shell",
+            "execute_command": "echo '{{user `ssh_password`}}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+            "scripts": [
+                "../scripts/ssh_config.sh",
+                "../scripts/centos_update.sh"
+            ]
+        },
+        {
+            "only": [
+                "vSphere-CentOS8"
+            ],
+            "execute_command": "echo '{{user `ssh_password`}}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+            "scripts": [
+                "../scripts/centos_8.sh"
+            ],
+            "type": "shell"
+        },
+        {
+            "only": [
+                "vSphere-Win2k19"
+            ],
+            "type": "powershell",
+            "elevated_user": "Administrator",
+            "elevated_password": "{{user `winadmin-password`}}",
+            "script": "../scripts/disable-windows-updates.ps1"
+        },
+        {
+            "only": [
+                "Aws-Win2k16",
+                "Aws-Win2k19"
+            ],
+            "type": "powershell",
+            "environment_vars": [
+                "newAdminPassword={{user `newAdminPassword` }}"
+            ],
+            "scripts": [
+                "../scripts/disable-windows-updates.ps1",
+                "../scripts/changeAdminPassword.ps1"
+            ]
+        },
+        {
+            "type": "windows-update",
+            "only": [
+                "Aws-Win2k16",
+                "vSphere-Win2k19",
+                "Aws-Win2k19"
+            ],
+            "search_criteria": "IsInstalled=0",
+            "filters": [
+                "exclude:$_.Title -like '*Preview*'",
+                "include:$true"
+            ],
+            "update_limit": 25
+        }
+    ],
+    "sensitive-variables": [
+        "vsphere_password",
+        "ssh_password",
+        "winrm_password",
+        "new_ansible_password",
+        "newAdminPassword"
+    ],
+    "post-processors": [
+        {
+            "type": "manifest",
+            "output": "/build/manifest.json",
+            "strip_path": true
+        }
+    ]
+}

@@ -1,0 +1,33 @@
+{
+    "name": "Aws-CentOS8",
+    "type": "amazon-ebs",
+    "region": "us-east-2",
+    "ami_regions": [
+        "us-east-2"
+    ],
+    "ami_name": "AWS-CentOS8-CUSTOM-{{user `build_version`}}",
+    "ami_description": "CentOS 8 minimal installation",
+    "ssh_username": "centos",
+    "instance_type": "t2.medium",
+    "ssh_pty": "true",
+    "source_ami_filter": {
+        "filters": {
+            "name": "CentOS-8.2-x86_64-Minimal-8GiB-HVM-*",
+            "root-device-type": "ebs",
+            "virtualization-type": "hvm"
+        },
+        "most_recent": true,
+        "owners": [
+            "679593333241"
+        ]
+    },
+    "ami_virtualization_type": "hvm",
+    "ebs_optimized": true,
+    "security_group_id": "sg-015c262bf096c7298",
+    "launch_block_device_mappings": [{
+        "volume_type": "gp2",
+        "device_name": "/dev/sda1",
+        "encrypted": true,
+        "volume_size": 8
+    }]
+}
