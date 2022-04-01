@@ -112,72 +112,30 @@ source "vsphere-iso" "vSphere-Win2k19" {
 # documentation for build blocks can be found here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/build
 build {
-  # sources = ["source.amazon-ebs.Aws-Win2k19", "source.vsphere-iso.vSphere-CentOS8", "source.vsphere-iso.vSphere-Win2k19"]
-# sources = ["source.amazon-ebs.Aws-Win2k19"]
-sources = ["source.vsphere-iso.vSphere-Win2k19"]
-# sources = ["source.vsphere-iso.vSphere-CentOS8"]
 
-# needs rework
+sources = ["source.vsphere-iso.vSphere-Win2k19","source.vsphere-iso.vSphere-CentOS8","source.amazon-ebs.Aws-Win2k19"]
+
   provisioner "shell" {
     # execute_command = "echo '${var.new_ansible_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
-    only            = ["vSphere-CentOS8"]
+    only            = ["vsphere-iso.vSphere-CentOS8"]
     scripts         = ["../scripts/ssh_config.sh", "../scripts/centos_update.sh"]
   }
 
-# needs rework
   provisioner "shell" {
     # execute_command = "echo '${new_ansible_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
-    only            = ["vSphere-CentOS8"]
+    only            = ["vsphere-iso.vSphere-CentOS8-CentOS8"]
     scripts         = ["../scripts/centos_8.sh"]
   }
-
-  # provisioner "powershell" {
-  #   elevated_password = "${var.new_ansible_password}"
-  #   elevated_user     = "${var.new_ansible_user}"
-  #   only              = ["vSphere-Win2k19"]
-  #   script            = "../scripts/disable-windows-updates.ps1"
-  # }
-
-#   provisioner "powershell" {
-#     environment_vars = ["newAdminPassword=${var.new_win_admin_password}"]
-#     only             = ["Aws-Win2k19"]
-#     scripts          = ["../scripts/disable-windows-updates.ps1", "../scripts/changeAdminPassword.ps1"]
-#   }
-
-#     provisioner "powershell" {
-# #     only             = ["vSphere-Win2k19"]
-#     scripts          = ["../scripts/disable-windows-updates.ps1"]
-#   }
-  
+ 
     provisioner "windows-update" { 
     pause_before = "5m" 
-    only            = ["vsphere-iso.vSphere-Win2k19"]
+    only            = ["vsphere-iso.vSphere-Win2k19","amazon-ebs.Aws-Win2k19"]
   }
 
       provisioner "windows-update" { 
       pause_before = "5m" 
-      only            = ["vsphere-iso.vSphere-Win2k199"]
+      only            = ["vsphere-iso.vSphere-Win2k199","amazon-ebs.Aws-Win2k19"]
   }
-
-  #     provisioner "windows-update" { 
-  #     pause_before = "5m" 
-  #     only            = ["vsphere-iso.vSphere-Win2k19"]
-  # }
-
-  # provisioner "windows-update" { 
-  #   pause_before = "1m" 
-  #   search_criteria = "IsInstalled=0"
-  #   filters         = ["exclude:$_.Title -like '*Preview*'", 
-  #                     "include:$true",]
-  #   # only            = ["vSphere-Win2k19"]
-  #   only            = ["vSphere-Win2k19", "Aws-Win2k19"]
-  #   update_limit    = 25
-  # }
-
-  # post-processor "manifest" {
-  #   output     = "/build/manifest.json"
-  #   strip_path = true
-  # }
 
 }
 

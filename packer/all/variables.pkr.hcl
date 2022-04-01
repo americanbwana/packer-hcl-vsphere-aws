@@ -47,7 +47,7 @@ variable "linux_root_password" {
 }
 # vSphere variables
 variable "vsphere_centos8_iso" {
-    default = "[hq-tintri2-af] ISOs/CentOS-8.2.2004-x86_64-minimal.iso"
+    default = "[datastore1] ISOs/CentOS-8.2.2004-x86_64-minimal.iso"
 }
 variable "vsphere_centos8_checksum" {
     default = "47ab14778c823acae2ee6d365d76a9aed3f95bb8d0add23a06536b58bb5293c0"
